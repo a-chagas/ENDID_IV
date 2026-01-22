@@ -9,8 +9,6 @@ output/
 .Rproj.user/
 *.Rproj
 
-# Data (descomente se não for publicar dados)
-
 # OS
 .DS_Store
 Thumbs.db
