@@ -10,8 +10,6 @@ output/
 *.Rproj
 
 # Data (descomente se não for publicar dados)
-data_article/
-*.rds
 
 # OS
 .DS_Store
