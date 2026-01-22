@@ -1,0 +1,23 @@
+category,name,default_or_value,description,example
+data_file,data_article/dt_bilateral_wheat.rds,,"Bilateral panel at the (exporter i, importer j, year) level used in the PPML first stage. Must contain the variables listed under 'required_columns_dt' below.",dt <- readRDS('data_article/dt_bilateral_wheat.rds')
+data_file,data_article/df_country_year_wheat.rds,,"Country-year panel used in the IV second stage (one row per iso-year). Must contain the endogenous variable, controls, and fixed effects.",df_iv <- readRDS('data_article/df_country_year_wheat.rds')
+required_columns_dt,Identifiers / FE / clusters,isoi; isoj; year; iso_pair; cl_iy; cl_jy,Minimum identifiers and clustering variables required by the first-stage PPML.,
+required_columns_dt,Dependent variable,value,Trade flow (or bilateral outcome) used as dependent variable in PPML.,
+required_columns_dt,Shock variable,speij_d_crop07,Importer-side shock used to build exposure (D_jt) and ultimately the instrument/exposure WD_row_hat.,
+required_columns_dt,PPML regressors (example),tempi; tempi2; precipi; precipi2; speii_d_crop07; tempj; tempj2; lnpopj; precipj; precipj2; lnanimalj; l2irrigationj; lnfoodj; speij_d_crop07; rta,Example RHS used in the script. Your dt must contain whichever variables you pass in rhs_ppml.,
+required_columns_df_iv,Identifiers / FE,iso; year; isoid,Minimum identifiers and fixed effects used in the second stage (iso-year merge key + FE).,
+required_columns_df_iv,Endogenous regressor,WD_row_obs,Observed exposure variable treated as endogenous in stage 3.,
+required_columns_df_iv,Second-stage dependent variable(s),"ln_production (and/or ln_area, ln_yield)",Outcome(s) for the IV regression.,
+required_columns_df_iv,Controls (example),temp; temp2; precip; precip2; irrigation2; spei_d_crop07,Example controls used in rhs_stage2. df_iv must contain whichever variables you pass in rhs_stage2.,
+parameter,std,row,Weight normalization when building w_ij: 'row' normalizes by exporter-year total predicted trade; 'gbl_year' normalizes by total predicted trade in each year.,std = 'row'
+parameter,predict_on_support,TRUE,"If TRUE, set predicted trade_hat to zero when the observed dependent variable (value) is zero/non-positive.",predict_on_support = TRUE
+parameter,powers,1L,Powers of the weights matrix used to build higher-order exposures. The replication script uses 1L (first-order exposure).,powers = 1L
+parameter,B,300,Number of bootstrap replications in the two-stage procedure.,B = 300
+parameter,n_cores,6,Number of CPU cores used for parallel bootstrap.,n_cores = 6
+parameter,chunk_size,10,Bootstrap replications per parallel chunk.,chunk_size = 10
+parameter,seed,1,Seed passed to doRNG to ensure reproducibility across parallel runs.,seed = 1
+parameter,cluster_ppml,cl_iy + cl_jy,Clustering variables for first-stage PPML standard errors (fixest vcov).,"cluster = c('cl_iy','cl_jy')"
+parameter,cluster_stage2,isoid + year,Clustering variables for second-stage IV regressions inside feols.,"cluster_stage2 <- c('isoid','year')"
+parameter,cluster_id,isoid,Cluster identifier(s) for block resampling in the bootstrap.,cluster_id = 'isoid'
+output,output/,,Folder created by the script for outputs. You can add exports (tables/figures) here.,
+output,Objects returned,mrob; resrob,mrob stores first-stage PPML outputs and the constructed instrument; resrob stores bootstrap results and coeftables.,summary(resrob$ln_production$stage3$coeftest)

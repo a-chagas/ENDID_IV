@@ -103,3 +103,4 @@ The bootstrap uses `doRNG`, so results are reproducible given the same seed, dat
 
 - If bootstrap standard errors are `NA`, too many draws likely failed (collinearity / not enough variation within sampled clusters). Try increasing `B`, simplifying the model, or verifying that `cluster_id` has many clusters.
 - If you get “cluster id(s) missing”, confirm those columns exist in `df_iv`.
+
